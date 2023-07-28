@@ -10,9 +10,9 @@ micro <- read.csv("data/phenoData/microMothsPhenoMetrics.csv")
 macro <- read.csv("data/phenoData/macroMothsPhenoMetrics.csv")
 
 #join with urbanization data
-urb <- read.csv("data/data_products/urbanization_gradient_SITE.csv")
-temp <- read.csv('data/data_products/temp_gradient_SITE.csv')
-light <- read.csv('data/data_products/lightData_SITE.csv')
+urb <- read.csv("data/urbanStressors/urbanization_gradient_SITE.csv")
+temp <- read.csv('data/urbanStressors/temp_gradient_SITE.csv')
+light <- read.csv('data/urbanStressors/lightData_SITE.csv')
 
 frass <- frass %>% 
   left_join(urb) %>% 
@@ -258,7 +258,6 @@ c3 <- ggplot() +
 
 cp_cor <- cowplot::plot_grid(c2,c1, c3)
 cp_cor
-ggsave('figOutputs/ch3/correlationPlot.png', plot = cp_cor, width = 5, height = 4)
 
 library(ggpubr)
 ga <- ggpubr::ggarrange(frass_plot1, micro_plot1, macro_plot1,
@@ -267,7 +266,7 @@ ga <- ggpubr::ggarrange(frass_plot1, micro_plot1, macro_plot1,
 
 ga
 
-ggsave(ga, filename = "figOutputs/ch3/communityModels_trapRE_CorrPlot.png", width = 9, height = 5)
+ggsave(ga, filename = "figOutputs/Fig2_PooledPhenoResponses.png", width = 9, height = 5)
 
 ### write table
 tbl <- rbind(frass1_modelOutputs, frass2_modelOutputs,

@@ -1,7 +1,7 @@
 library(phyr)
 library(ape)
 
-source("scripts/Modeling/speciesSpecificPhenoModels_Poisson.R")
+source("scripts/analyses/07_SppSpecific_PhenoModeling.R")
 
 # function to capitalize spp names
 firstup <- function(x) {
@@ -9,7 +9,7 @@ firstup <- function(x) {
   x
 }
 
-tt <- read.tree("data/phylogeny/insect_tree_wBranches_allSpecies.tre")
+tt <- read.tree("data/traits/insect_tree_wBranches_allSpecies.tre")
 tt$tip.label <- stringr::str_replace(tt$tip.label, pattern = "_", " ")
 tt$tip.label <- firstup(tt$tip.label)
 

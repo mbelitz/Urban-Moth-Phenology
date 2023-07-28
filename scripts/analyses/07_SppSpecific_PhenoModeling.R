@@ -1,16 +1,13 @@
-library(dplyr)
-library(ggplot2)
 library(lme4)
 library(lmerTest)
 library(sjPlot)
-library(tidyr)
 library(tidyverse)
 library(data.table)
 library(MuMIn)
 library(car)
 
 # read in gams
-l <- list.files("data/gamOutputsCSVs_Poisson/", full.names = T)
+l <- list.files("data/sppSpecific_gamOutputsCSVs/", full.names = T)
 
 gam_df <- l %>% 
   map_df(~fread(.))
@@ -26,12 +23,13 @@ phenoMet <- gam_df %>%
             duration = sum(fit > 0.5))
 
 # read in urbanization metrics
-urb <- read.csv('data/data_products/urbanization_gradient.csv')
+urb <- read.csv('data/urbanStressors/urbanization_gradient_SITE.csv') %>% 
+  mutate(Site = str_to_title(Site))
 
 phenoMet <- left_join(phenoMet, urb) %>% 
   ungroup()
 
-traits <- read.csv("data/totalSppList.csv") %>% 
+traits <- read.csv("data/traits/traits_totalSppList.csv") %>% 
   mutate(minWingspan = if_else(notes == "WS",
                                true = minWingspan/2,
                                false = as.double(minWingspan)),
@@ -54,13 +52,13 @@ mdf <- mdf %>%
   mutate(peak = if_else(condition = peak > 365, true = peak - 365, false = peak))
 
 # read in tempNiche data
-tempNiche <- read.csv("data/tempNicheData/geographicdata_fixed.csv")
+tempNiche <- read.csv("data/traits//geographicdata_fixed.csv")
 
 mdf <- mdf %>% 
   left_join(tempNiche, by = c("validName" = "species"))
 
 # read in temp data
-temp <- read.csv("data/data_products/temp_gradient.csv")
+temp <- read.csv("data/urbanStressors/temp_gradient.csv")
 mdf <- left_join(mdf, temp)
 
 mdf <- mdf %>% 
@@ -177,7 +175,7 @@ r.squaredGLMM(m3_top)
 
 summary(m3_top)
 
-sjPlot::tab_model(m3_top, file = "tabOutputs/ch3/spp_specific_LMM.doc")
+# sjPlot::tab_model(m3_top, file = "tabOutputs/spp_specific_LMM.doc")
 
 
 peak_temp_plot <- plot_model(m3_top, terms = "rel_temp", type = "pred")
@@ -264,5 +262,5 @@ d <- ggplot(peak_bstmp_plot_df) +
 d
 
 cp2 <- cowplot::plot_grid(c,d, labels = c("A", "B"), nrow = 2, ncol = 1)
-ggsave(plot = cp2, filename = "figOutputs/ch3/Fig3_sppSpecificIntercations.png", dpi = 450,
+ggsave(plot = cp2, filename = "figOutputs/Fig3_sppSpecificIntercations.png", dpi = 450,
        width = 5.5, height = 7)
