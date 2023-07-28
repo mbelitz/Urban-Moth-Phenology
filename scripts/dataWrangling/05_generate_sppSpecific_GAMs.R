@@ -1,12 +1,11 @@
 library(dplyr)
 library(ggplot2)
 library(lubridate)
-#library(rbms)
 library(mgcv)
 library(stringr)
 
 # read in adult dataset
-moth_df <- read.csv("data/data_products/adultDataSet_validNames.csv") %>% 
+moth_df <- read.csv("data/field_observations/adultDataSet_validNames.csv") %>% 
   distinct(id, .keep_all = T) %>% # this removes duplicate photos of the same individual
   mutate(year = year(mdy(eventDate))) %>% 
   mutate(doy = if_else(
@@ -34,7 +33,7 @@ moth_df_filter <- moth_df %>%
   filter(!is.na(doy))
 
 # what days had surveys for each site
-surveyDates <- read.csv("data/data_products/surveyDateSheet.csv") %>% 
+surveyDates <- read.csv("data/field_observations/surveyDateSheet.csv") %>% 
   select(eventDate, location)
 
 surveyDates$eventDate <- lubridate::mdy(surveyDates$eventDate)
@@ -52,7 +51,7 @@ surveyDates <- surveyDates %>%
                           Site == "BOWA" ~ "Bowa"))
 
 # don't forget lunar data
-lunar.phase <- read.csv("data/data_products/lunarIllumination.csv") %>% 
+lunar.phase <- read.csv("data/urbanStressors/lunarIllumination.csv") %>% 
   mutate(Date = mdy(Date))
 surveyDates <- left_join(surveyDates, lunar.phase, by = c("eventDate" = "Date"))
 surveyDates <- surveyDates %>% 
@@ -105,7 +104,7 @@ save_gam_csv <- function(g){
   
   if(nrow(filter(g, fit > 0))){
     
-    fp_csvs <- file.path('data/gamOutputsCSVs_Poisson/')
+    fp_csvs <- file.path('data/sppSpecific_gamOutputsCSVs/')
     fp_figures <- file.path('figOutputs/gams/')
     
     write.csv(x = g, file = paste0(fp_csvs, '/',"GAM_", 
@@ -194,7 +193,12 @@ gam_pipeline <- function(binomial){
 spp_list <- unique(enoughSites$validName)
 spp_list
 
+# This part of the workflow was not 100% automated 
+# What we did was 1) fit a GAM for every species in the list [1:141]
+# 2) examined the predicted outputs and removed sites from output where either there
+# were not enough data to fit the GAM or the GAM did not produce an unambigious peak
 
-#first batch
-#1
-gam_pipeline(binomial = spp_list[1]) # remove Auca, Prcr, Baca
+# Here's the example code for the first species on the list
+# gam_pipeline(binomial = spp_list[1]) # remove Auca, Prcr, Baca
+
+# on the GitHub we will release the species X site GAMs that passed our test

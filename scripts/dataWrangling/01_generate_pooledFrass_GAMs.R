@@ -4,7 +4,7 @@ library(lubridate)
 library(mgcv)
 
 
-frass_df <- read.csv("data/data_products/frass_biomass_reweigh_doyDiff.csv")
+frass_df <- read.csv("data/field_observations/frass_biomass_reweigh_doyDiff.csv")
 
 frass_df <- frass_df %>% 
   mutate(MassPerDay = Mass/diff)
@@ -204,7 +204,7 @@ cp <- cowplot::plot_grid(baca_plot, cofr_plot, joma_plot,
                          nrow = 3, ncol = 3)
 cp
 
-ggsave(plot = cp, filename = "figOutputs/ch3/frassGams_perDay_randomEffect.png", dpi = 450,
+ggsave(plot = cp, filename = "figOutputs/frassGams_perDay_randomEffect.png", dpi = 450,
        width = 12, height = 8)
 
 
@@ -213,4 +213,4 @@ ggsave(plot = cp, filename = "figOutputs/ch3/frassGams_perDay_randomEffect.png",
 tdf <- rbind(auca_gam_pred, prcr_gam_pred, rist_gam_pred,
              demi_gam_pred, bowa_gam_pred, biva_gam_pred,
              baca_gam_pred, cofr_gam_pred, joma_gam_pred)
-write.csv(tdf, file = "data/data_products/frassGams_perDay_randomEffect.csv", row.names = F)
+write.csv(tdf, file = "data/gamOutputs/frassGams_perDay_randomEffect.csv", row.names = F)

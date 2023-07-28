@@ -4,7 +4,7 @@ library(lubridate)
 library(mgcv)
 
 # read in adult data
-adult_df <- read.csv("data/rawMeasurements/surveyDateSheet.csv") %>% 
+adult_df <- read.csv("data/field_observations/surveyDateSheet.csv") %>% 
   mutate(doy = yday(mdy(eventDate)),
          year = year(mdy(eventDate))) %>% 
   mutate(doy2 = if_else(condition = year == 2019,
@@ -21,7 +21,7 @@ ggplot(adult_gb, aes(x = doy2, y = microMoths, color = location)) +
   geom_smooth(method = "gam", formula = y ~ s(x, bs = "cr", k = 24))
 
 # read in lunar illumination
-lunar.phase <- read.csv("data/data_products/lunarIllumination.csv") %>% 
+lunar.phase <- read.csv("data/urbanStressors/lunarIllumination.csv") %>% 
   mutate(Date = mdy(Date)) %>% 
   mutate(doy = yday(Date),
          year = year(Date)) %>% 
@@ -209,7 +209,7 @@ cp <- cowplot::plot_grid(baca_plot, cofr_plot, joma_plot,
                          nrow = 3, ncol = 3)
 cp
 
-ggsave(plot = cp, filename = "figOutputs/ch3/microMothGams.png", dpi = 450,
+ggsave(plot = cp, filename = "figOutputs/microMothGams.png", dpi = 450,
        width = 12, height = 8)
 
 
@@ -220,4 +220,4 @@ tdf <- rbind(auca_gam_pred, prcr_gam_pred, rist_gam_pred,
              baca_gam_pred, cofr_gam_pred, joma_gam_pred)
 
 
-write.csv(tdf, file = "data/data_products/microMothGams.csv", row.names = F)
+write.csv(tdf, file = "data/gamOutputs/microMothGams.csv", row.names = F)

@@ -2,13 +2,13 @@ library(dplyr)
 library(ggplot2)
 
 # read in phenology gams
-frass_gams <- read.csv("data/data_products/frassGams_perDay_randomEffect.csv") %>% 
+frass_gams <- read.csv("data/gamOutputs/frassGams_perDay_randomEffect.csv") %>% 
   mutate(unit = "Frass") %>% 
   mutate(rel_abundance = (fit * -1) / (max(fit) * -1))
-macro_gams <- read.csv("data/data_products/macroMothGams.csv") %>% 
+macro_gams <- read.csv("data/gamOutputs/macroMothGams.csv") %>% 
   mutate(unit = "Macro-moths") %>% 
   mutate(rel_abundance = fit / max(fit))
-micro_gams <- read.csv('data/data_products/microMothGams.csv') %>% 
+micro_gams <- read.csv('data/gamOutputs/microMothGams.csv') %>% 
   mutate(unit = "Micro-moths") %>% 
   mutate(rel_abundance = fit / max(fit))
 
