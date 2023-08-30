@@ -40,23 +40,14 @@ frassPeak1_dev10 <- lm(formula = peak1 ~ Dev_10,
                        data = frass)
 frassPeak1_temp <- lm(formula = peak1 ~ rel_temp,
                       data = frass)
-frassPeak1_light <- lm(formula = peak1 ~ meanLight,
-                       data = frass)
 
 Weights(AICc(frassPeak1_dev1, frassPeak1_dev10, frassPeak1_temp))
 model.sel(frassPeak1_dev1, frassPeak1_dev10, frassPeak1_temp)
 # get BH correction for three outputs
-summary(frassPeak1_dev1) # p = 0.321
-summary(frassPeak1_dev10) # p = 0.489
-summary(frassPeak1_temp) # p = 0.501
-p.adjust(p = c(0.3206, 0.4887, 0.5007), method = "BH")
-
-frass_plot_df1 <- plot_model(frassPeak1_dev1, type = "pred", terms = "Dev_1")$data
-frass1_modelOutputs <- as.data.frame(summary(frassPeak1_dev1)$coefficients) %>% 
-  mutate(Weights = 0.34,
-         R2 = 0.19,
-         p.value = 0.32,
-         Model = "Frass_Peak1")
+summary(frassPeak1_dev1) #7.138
+confint(frassPeak1_dev1, 'Dev_1', level=0.95) #-9.5 - 23.78
+summary(frassPeak1_dev10) 
+summary(frassPeak1_temp)
 
 frass_plot1 <- ggplot() +
   geom_point(frass, mapping = aes(x = Dev_1, y = peak1)) +
@@ -80,18 +71,14 @@ frassPeak2_temp <- lm(formula = peak2 ~ rel_temp,
 
 Weights(AICc(frassPeak2_dev1, frassPeak2_dev10, frassPeak2_temp))
 model.sel(frassPeak2_dev1, frassPeak2_dev10, frassPeak2_temp)
-summary(frassPeak2_dev10)
-# get holm correction for three outputs
-summary(frassPeak2_dev1) # p = 0.3308
-summary(frassPeak2_dev10) # p = 0.1203
-summary(frassPeak2_temp) # p = 0.2203
-p.adjust(p = c(0.3308, 0.1203, 0.2203), method = "BH")
+summary(frassPeak2_dev10) # -34.1
+confint(frassPeak1_dev10) # -19.4 - 35.3
 
-frass2_modelOutputs <- as.data.frame(summary(frassPeak2_dev10)$coefficients) %>% 
-  mutate(Weights = 0.53,
-         R2 = 0.31,
-         p.value = 0.12,
-         Model = "Frass_Peak2")
+summary(frassPeak2_dev1) # 0.33
+confint(frassPeak2_dev1) # -50.4 - 19.5
+
+summary(frassPeak2_temp) # 0.2
+confint(frassPeak2_temp) #-56.9 - 15.6
 
 frass_plot_df2 <- plot_model(frassPeak2_dev10, type = "pred", terms = "Dev_10")$data
 
@@ -116,25 +103,22 @@ microPeak1_temp <- lm(formula = peak1 ~ rel_temp,
 
 Weights(AICc(microPeak1_dev1, microPeak1_dev10, microPeak1_temp))
 model.sel(microPeak1_dev1, microPeak1_dev10, microPeak1_temp)
-summary(microPeak1_temp)
-micro1_modelOutputs <- as.data.frame(summary(microPeak1_dev1)$coefficients) %>% 
-  mutate(Weights = 0.95,
-         R2 = 0.55,
-         p.value = 0.02,
-         Model = "Micro_Peak1")
 
-# get BH correction for three outputs
-summary(microPeak1_dev1) # p = 0.827
-summary(microPeak1_dev10) # p = 0.984
-summary(microPeak1_temp) # p = 0.0225
-p.adjust(p = c(0.827, 0.984, 0.022), method = "BH")
+summary(microPeak1_temp) # -38.1
+confint(microPeak1_temp) # -70.2 - -5.9
+
+summary(microPeak1_dev1) # -5.7
+confint(microPeak1_dev1) # -48.6 - 37.2
+
+summary(microPeak1_dev10) #-0.04
+confint(microPeak1_dev10) # -63.1 - 63.1
 
 
 micro_plot_df1 <- plot_model(microPeak1_temp, type = "pred", terms = "rel_temp")$data
 
 micro_plot1 <- ggplot() +
   geom_jitter(micro, mapping = aes(x = rel_temp, y = peak1)) +
-  geom_line(micro_plot_df1, mapping = aes(x = x, y = predicted), linetype = "dashed") +
+  geom_line(micro_plot_df1, mapping = aes(x = x, y = predicted)) +
   geom_ribbon(micro_plot_df1, mapping = aes(x = x, ymin = conf.low, ymax = conf.high),
               alpha = 0.2) +
   labs(x = "Relative temperature of site", y = "DOY: First peak") +
@@ -155,19 +139,15 @@ Weights(AICc(microPeak2_dev1, microPeak2_dev10, microPeak2_temp))
 model.sel(microPeak2_dev1, microPeak2_dev10, microPeak2_temp)
 
 micro_plot_df2 <- plot_model(microPeak2_dev10, type = "pred", terms = "Dev_10")$data
-summary(microPeak2_dev10)
-micro2_modelOutputs <- as.data.frame(summary(microPeak2_dev10)$coefficients) %>% 
-  mutate(Weights = 0.39,
-         R2 = 0.06,
-         p.value = 0.54,
-         Model = "Micro_Peak2")
 
-# get holm correction for three outputs
-summary(microPeak2_dev1) # p = 0.943
-summary(microPeak2_dev10) # p = 0.5412
-summary(microPeak2_temp) # p = 0.9946
-p.adjust(p = c(0.943, 0.5412, 0.9946), method = "BH")
+summary(microPeak2_dev10) # 25.23
+confint(microPeak2_dev10) # -68.6 - 118.9
 
+summary(microPeak2_dev1) # 1.6
+confint(microPeak2_dev1) #-64.4 - 67.7
+
+summary(microPeak2_temp) # 1.26
+confint(microPeak2_temp) #-70.2 - 72.7
 
 micro_plot2 <- ggplot() +
   geom_jitter(micro, mapping = aes(x = Dev_10, y = peak2)) +
@@ -187,26 +167,23 @@ macroPeak1_temp <- lm(formula = peak ~ rel_temp,
                       data = macro)
 
 Weights(AICc(macroPeak1_dev1, macroPeak1_dev10, macroPeak1_temp))
-summary(macroPeak1_temp)
+
 model.sel(macroPeak1_dev1, macroPeak1_dev10, macroPeak1_temp)
-macro1_modelOutputs <- as.data.frame(summary(macroPeak1_temp)$coefficients) %>% 
-  mutate(Weights = 0.94,
-         R2 = 0.56,
-         p.value = 0.02,
-         Model = "Macro_Peak1")
 
-# get holm correction for three outputs
-summary(macroPeak1_dev1) # p = 0.5335
-summary(macroPeak1_dev10) # p = 0.6656
-summary(macroPeak1_temp) # p = 0.01988
-p.adjust(p = c(0.5335, 0.6656, 0.01988), method = "BH")
+summary(macroPeak1_temp) # -55.8
+confint(macroPeak1_temp) # -101.8 - -9.8
 
+summary(macroPeak1_dev1) #17.6
+confint(macroPeak1_dev1) #-78.3 - 43.0
+
+summary(macroPeak1_dev10) # -17.6
+confint(macroPeak1_dev10) # -107.7 - 72.4
 
 macro_plot_df1 <- plot_model(macroPeak1_temp, type = "pred", terms = "rel_temp")$data
 
 macro_plot1 <- ggplot() +
   geom_point(macro, mapping = aes(x = rel_temp, y = peak)) +
-  geom_line(macro_plot_df1, mapping = aes(x = x, y = predicted), linetype = "dashed") +
+  geom_line(macro_plot_df1, mapping = aes(x = x, y = predicted)) +
   geom_ribbon(macro_plot_df1, mapping = aes(x = x, ymin = conf.low, ymax = conf.high),
               alpha = 0.2) +
   labs(x = "Relative tempearture", y = "Peak DOY") +
@@ -269,7 +246,46 @@ ga
 ggsave(ga, filename = "figOutputs/Fig2_PooledPhenoResponses.png", width = 9, height = 5)
 
 ### write table
-tbl <- rbind(frass1_modelOutputs, frass2_modelOutputs,
-             micro1_modelOutputs, micro2_modelOutputs,
-             macro1_modelOutputs) %>% 
-  mutate(across(where(is.numeric), round, 3))
+lm_to_table <- function(x){
+  
+  df <- data.frame(Predictor = colnames(x$model)[2],
+                   Estimate = summary(x$coefficients)[[1]],
+                   Lower.CI = confint(x)[2,1],
+                   Upper.CI = confint(x)[2,2],
+                   R2 = MuMIn::r.squaredGLMM(x)[[1]])
+  
+  return(df)
+  
+}
+
+
+tbl <- rbind(
+  lm_to_table(frassPeak1_dev1),
+  lm_to_table(frassPeak1_dev10),
+  lm_to_table(frassPeak1_temp),                         
+                         
+  lm_to_table(frassPeak2_dev1),
+  lm_to_table(frassPeak2_dev10),
+  lm_to_table(frassPeak2_temp),                        
+
+  lm_to_table(microPeak1_dev1),                         
+  lm_to_table(microPeak1_dev10),                         
+  lm_to_table(microPeak1_temp),  
+  
+  lm_to_table(microPeak2_dev1),                         
+  lm_to_table(microPeak2_dev10),                         
+  lm_to_table(microPeak2_temp),  
+  
+  lm_to_table(macroPeak1_dev1),                         
+  lm_to_table(macroPeak1_dev10),                         
+  lm_to_table(macroPeak1_temp))
+
+tbl$Model <- c(rep("Frass", 6),
+               rep("Micro-moth", 6),
+               rep("Macro-moth", 3))
+
+tbl$Peak <- c(1,1,1,2,2,2,
+              1,1,1,2,2,2,
+              1,1,1)
+
+write.csv(tbl, file = "tabOutputs/univariateModels.csv", row.names = F)
