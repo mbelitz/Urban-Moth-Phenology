@@ -29,14 +29,11 @@ tt <- ape::drop.tip(tt, tip = sppNotInAnlysis$validName)
 summary(m3)
 #Formula: peak ~ rel_temp + bio1_mean + rel_temp:bio1_mean + (1 | validName)
 
-peak_pglmm <- pglmm(peak ~ rel_temp + voltinism  + maxWingspan + 
-                      hostPlantSepcialization + bio1_mean + bio1_sd +
+peak_pglmm <- pglmm(peak ~ rel_temp + voltinism  + maxWingspan + bio1_mean + 
                       rel_temp:voltinism +
                       rel_temp:maxWingspan +
-                      rel_temp:hostPlantSepcialization +
                       rel_temp:bio1_mean +
-                      rel_temp:bio1_sd +
-                      (1|pseudoValidName), 
+                      (1|pseudoValidName__), 
                     data = mdf_phylo, 
                     cov_ranef = list(pseudoValidName = tt), 
                     bayes = TRUE)

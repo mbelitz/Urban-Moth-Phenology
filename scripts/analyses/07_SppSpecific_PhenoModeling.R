@@ -74,16 +74,8 @@ mdf <- mdf %>%
          rel_temp = scale(rel_temp),
          max_lat = scale(max_lat),
          maxWingspan = scale(maxWingspan),
-         bio1_mean = scale(bio1_mean),
-         bio1_sd = scale(bio1_sd),
-         rel_hsi = scale(rel_hsi),
-         mean_rh = scale(mean_rh)) %>% 
-  mutate(hostPlantSepcialization = case_when(
-    dietBreadth == "multiFamily" | dietBreadth == "detritus" ~ 1,
-    dietBreadth == "Family" ~ 2,
-    dietBreadth == "genus" | dietBreadth == "Genus" | dietBreadth == "species" ~ 3,
-    dietBreadth == "unk" ~ 2
-  ))
+         bio1_mean = scale(bio1_mean)) %>% 
+  select(peak, Site, validName, Dev_1, Dev_10, rel_temp, voltinism, maxWingspan, bio1_mean)
 
 mdf <- na.omit(mdf)
 
@@ -95,7 +87,7 @@ mdf <- na.omit(mdf)
 # sites must have at least 2 species
 sites <- mdf %>% 
   group_by(Site) %>% 
-  summarise(nSpp = length(unique(validName))) ## BACA has to go :(
+  summarise(nSpp = length(unique(validName))) ## there is no baca
 
 mdf <- mdf %>% 
   filter(Site != "Baca")
@@ -113,62 +105,53 @@ mdf <- na.omit(mdf)
 # peak modeling
 # Dev1
 #checking for collinearity among predictors (so no interactions included)
-m_col <- lmer(formula = peak ~ Dev_1 + voltinism + maxWingspan + 
-            hostPlantSepcialization + bio1_mean + bio1_sd +
+m_col <- lmer(formula = peak ~ Dev_1 + voltinism + maxWingspan + bio1_mean + 
             (1|validName),
           data = mdf, REML = F)
 performance::check_collinearity(m_col)
 
-m <- lmer(formula = peak ~ Dev_1 + voltinism + maxWingspan + 
-            hostPlantSepcialization + bio1_mean + bio1_sd +
+m <- lmer(formula = peak ~ Dev_1 + voltinism + maxWingspan + bio1_mean + 
             Dev_1:voltinism +
             Dev_1:maxWingspan +
-            Dev_1:hostPlantSepcialization +
             Dev_1:bio1_mean +
-            Dev_1:bio1_sd +
             (1|validName),
           data = mdf, REML = F)
+
+performance::check_collinearity(m)
 summary(m)
 confint(m)
 
 # Dev10 model
-
-m2_col <- lmer(formula = peak ~ Dev_10 + voltinism +  maxWingspan + 
-             hostPlantSepcialization + bio1_mean + bio1_sd +
+m2_col <- lmer(formula = peak ~ Dev_10 + voltinism +  maxWingspan + bio1_mean + 
              (1|validName),
            data = mdf, REML = F)
 performance::check_collinearity(m2_col)
 
-m2 <- lmer(formula = peak ~ Dev_10 + voltinism +  maxWingspan + 
-             hostPlantSepcialization + bio1_mean + bio1_sd +
+m2 <- lmer(formula = peak ~ Dev_10 + voltinism +  maxWingspan + bio1_mean +
              Dev_10:voltinism +
              Dev_10:maxWingspan +
-             Dev_10:hostPlantSepcialization +
              Dev_10:bio1_mean +
-             Dev_10:bio1_sd +
              (1|validName),
            data = mdf, REML = F)
 
+performance::check_collinearity(m2)
 summary(m2)
 confint(m2)
 
 #rel temp modeling
-m3_col <- lmer(formula = peak ~ rel_temp + voltinism  + maxWingspan + 
-             hostPlantSepcialization + bio1_mean + bio1_sd +
+m3_col <- lmer(formula = peak ~ rel_temp + voltinism  + maxWingspan + bio1_mean + 
              (1|validName),
            data = mdf, REML = F)
 performance::check_collinearity(m3_col)
 
-m3 <- lmer(formula = peak ~ rel_temp + voltinism  + maxWingspan + 
-             hostPlantSepcialization + bio1_mean + bio1_sd +
+m3 <- lmer(formula = peak ~ rel_temp + voltinism  + maxWingspan + bio1_mean + 
              rel_temp:voltinism +
              rel_temp:maxWingspan +
-             rel_temp:hostPlantSepcialization +
              rel_temp:bio1_mean +
-             rel_temp:bio1_sd +
              (1|validName),
            data = mdf, REML = F)
 
+performance::check_collinearity(m3)
 summary(m3)
 confint(m3)
 
@@ -181,7 +164,6 @@ r.squaredGLMM(m3)
 summary(m3)
 
 # sjPlot::tab_model(m3, file = "tabOutputs/spp_specific_LMM.doc")
-
 peak_temp_plot <- plot_model(m3, terms = "rel_temp", type = "pred")
 peak_bio1Mean_plot <- plot_model(m3, terms = "bio1_mean", type = "pred")
 plot_model(m3, terms = "voltinism", type = "pred")
@@ -191,7 +173,6 @@ peak_int_plot <- plot_model(m3, terms = c("rel_temp", "bio1_mean [-1,0,1]"), typ
 
 ## make manuscript figures
 # first for peak
-
 peak_int_plot_df <- peak_int_plot$data
 peak_bio1Mean_plot_df <- peak_bio1Mean_plot$data
 peak_temp_plot_df <- peak_temp_plot$data
@@ -272,7 +253,7 @@ ggsave(plot = cp2, filename = "figOutputs/Fig3_sppSpecificIntercations.png", dpi
 
 ## write tables for three competing models
 m_df <- as.data.frame(summary(m)$coefficients)
-m_ci <- as.data.frame(confint(m)[3:14,])
+m_ci <- as.data.frame(confint(m)[3:10,])
 m_df$Lower.CI <- as.vector(m_ci$`2.5 %`)
 m_df$Upper.CI <- as.vector(m_ci$`97.5 %`)
 m_df <- rownames_to_column(m_df)
@@ -280,7 +261,7 @@ m_df <- rownames_to_column(m_df)
 write.csv(m_df, "tabOutputs/Dev1_sppSpecificEffects.csv", row.names = F)
 
 m2_df <- as.data.frame(summary(m2)$coefficients)
-m2_ci <- as.data.frame(confint(m2)[3:14,])
+m2_ci <- as.data.frame(confint(m2)[3:10,])
 m2_df$Lower.CI <- as.vector(m2_ci$`2.5 %`)
 m2_df$Upper.CI <- as.vector(m2_ci$`97.5 %`)
 m2_df <- rownames_to_column(m2_df)
@@ -289,9 +270,11 @@ m2_df <- rownames_to_column(m2_df)
 write.csv(m2_df, "tabOutputs/Dev10_sppSpecificEffects.csv", row.names = F)
 
 m3_df <- as.data.frame(summary(m3)$coefficients)
-m3_ci <- as.data.frame(confint(m3)[3:14,])
+m3_ci <- as.data.frame(confint(m3)[3:10,])
 m3_df$Lower.CI <- as.vector(m3_ci$`2.5 %`)
 m3_df$Upper.CI <- as.vector(m3_ci$`97.5 %`)
 m3_df <- rownames_to_column(m3_df)
 
 write.csv(m3_df, "tabOutputs/relTemp_sppSpecificEffects.csv", row.names = F)
+
+r.squaredGLMM(m3)
