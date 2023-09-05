@@ -49,6 +49,9 @@ confint(frassPeak1_dev1, 'Dev_1', level=0.95) #-9.5 - 23.78
 summary(frassPeak1_dev10) 
 summary(frassPeak1_temp)
 
+frass_plot_df1 <- plot_model(frassPeak1_dev1, type = "pred", terms = "Dev_1")$data
+
+
 frass_plot1 <- ggplot() +
   geom_point(frass, mapping = aes(x = Dev_1, y = peak1)) +
   geom_line(frass_plot_df1, mapping = aes(x = x, y = predicted)) +
@@ -121,7 +124,7 @@ micro_plot1 <- ggplot() +
   geom_line(micro_plot_df1, mapping = aes(x = x, y = predicted)) +
   geom_ribbon(micro_plot_df1, mapping = aes(x = x, ymin = conf.low, ymax = conf.high),
               alpha = 0.2) +
-  labs(x = "Relative temperature of site", y = "DOY: First peak") +
+  labs(x = "Relative temperature (\u00B0C)", y = "DOY: First peak") +
   ggtitle("Micro-moths") +
   theme_classic() +
   theme(plot.title = element_text(hjust = 0.5, size = 16)) 
@@ -186,7 +189,7 @@ macro_plot1 <- ggplot() +
   geom_line(macro_plot_df1, mapping = aes(x = x, y = predicted)) +
   geom_ribbon(macro_plot_df1, mapping = aes(x = x, ymin = conf.low, ymax = conf.high),
               alpha = 0.2) +
-  labs(x = "Relative tempearture", y = "Peak DOY") +
+  labs(x = "Relative tempearture (\u00B0C)", y = "Peak DOY") +
   ggtitle("Macro-moths") +
   theme_classic() +
   theme(plot.title = element_text(hjust = 0.5, size = 16)) 
