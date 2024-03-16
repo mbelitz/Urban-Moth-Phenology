@@ -201,4 +201,4 @@ spp_list
 # Here's the example code for the first species on the list
 # gam_pipeline(binomial = spp_list[1]) # remove Auca, Prcr, Baca
 
-# on the GitHub we will release the species X site GAMs that passed our test
+# on the GitHub we release the species X site GAMs that passed our test
