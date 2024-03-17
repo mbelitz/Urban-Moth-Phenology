@@ -209,7 +209,7 @@ cp <- cowplot::plot_grid(baca_plot, cofr_plot, joma_plot,
                          nrow = 3, ncol = 3)
 cp
 
-ggsave(plot = cp, filename = "figOutputs/macroMothGams.png", dpi = 450,
+ggsave(plot = cp, filename = "figOutputs/macroMothGams_negBinomial.png", dpi = 450,
        width = 12, height = 8)
 
 
@@ -220,4 +220,4 @@ tdf <- rbind(auca_gam_pred, prcr_gam_pred, rist_gam_pred,
              baca_gam_pred, cofr_gam_pred, joma_gam_pred)
 
 
-write.csv(tdf, file = "data/gamOutputs/macroMothGams.csv", row.names = F)
+write.csv(tdf, file = "data/gamOutputs/macroMothGams_negBinomial.csv", row.names = F)
