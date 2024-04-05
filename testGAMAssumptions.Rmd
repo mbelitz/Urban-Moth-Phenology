@@ -1,0 +1,341 @@
+---
+title: "GAM Assumption Checks"
+author: "Michael W Belitz"
+date: "2024-03-16"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(lubridate)
+library(DHARMa)
+library(mgcv)
+# read in adult data
+adult_df <- read.csv("data/field_observations/surveyDateSheet.csv") %>% 
+  mutate(doy = yday(mdy(eventDate)),
+         year = year(mdy(eventDate))) %>% 
+  mutate(doy2 = if_else(condition = year == 2019,
+                        true = doy,
+                        false = doy + 365))
+
+adult_gb <- adult_df %>% 
+  group_by(doy2, location) %>% 
+  summarise(macroMoths = sum(macroMoths),
+            microMoths = sum(microMoths))
+
+# read in lunar illumination
+lunar.phase <- read.csv("data/urbanStressors/lunarIllumination.csv") %>% 
+  mutate(Date = mdy(Date)) %>% 
+  mutate(doy = yday(Date),
+         year = year(Date)) %>% 
+  mutate(doy2 = if_else(condition = year == 2019,
+                        true = doy,
+                        false = doy + 365))
+
+adult_gb <- left_join(adult_gb, lunar.phase, by = "doy2")
+
+# get adult df for each location
+auca_adult_df <- filter(adult_gb, location == "AUCA")
+rist_adult_df <- filter(adult_gb, location == "RIST")
+prcr_adult_df <- filter(adult_gb, location == "PRCR")
+
+bowa_adult_df <- filter(adult_gb, location == "BOWA")
+biva_adult_df <- filter(adult_gb, location == "BIVA")
+demi_adult_df <- filter(adult_gb, location == "DEMI")
+
+cofr_adult_df <- filter(adult_gb, location == "COFR")
+baca_adult_df <- filter(adult_gb, location == "BACA")
+joma_adult_df <- filter(adult_gb, location == "JOMA")
+
+
+generateDHARMa <- function(site_df, distributionFamily){
+  
+  g <- gam(macroMoths ~ s(doy, k = 6, bs = "cr") + s(lunar.phase, k = 3, bs = "cr"),  
+         data = site_df, family = distributionFamily)
+
+res = DHARMa::simulateResiduals(g)
+resPlot <- plot(res)
+
+return(resPlot)
+  
+}
+
+generateDHARMaMicro <- function(site_df, distributionFamily){
+  
+  g <- gam(microMoths ~ s(doy, k = 6, bs = "cr") + s(lunar.phase, k = 3, bs = "cr"),  
+         data = site_df, family = distributionFamily)
+
+res = DHARMa::simulateResiduals(g)
+resPlot <- plot(res)
+
+return(resPlot)
+  
+}
+
+```
+
+## Pooled Macro-moth checks
+
+### First negative binomial distributions
+
+Site: AUCA
+```{r macroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = auca_adult_df, distributionFamily = negbin(3))
+
+```
+
+Site: PRCR
+```{r prcrmacroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = prcr_adult_df, distributionFamily = negbin(3))
+
+```
+
+Site: Rist
+```{r ristmacroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = rist_adult_df, distributionFamily = negbin(3))
+
+```
+
+Site: Demi
+```{r demimacroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = demi_adult_df, distributionFamily = negbin(3))
+
+```
+
+Site: Bowa
+```{r bowamacroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = bowa_adult_df, distributionFamily = negbin(3))
+
+```
+
+Site: Biva
+```{r bivamacroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = biva_adult_df, distributionFamily = negbin(3))
+
+```
+
+Site: Baca
+```{r bacamacroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = baca_adult_df, distributionFamily = negbin(3))
+
+```
+
+Site: Cofr
+```{r cofrmacroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = cofr_adult_df, distributionFamily = negbin(3))
+
+```
+
+Site: Joma
+```{r jomamacroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = joma_adult_df, distributionFamily = negbin(3))
+
+```
+
+## Now fit using poisson
+
+Site: AUCA
+```{r macroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = auca_adult_df, distributionFamily = poisson())
+
+```
+
+Site: PRCR
+```{r prcrmacroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = prcr_adult_df, distributionFamily = poisson())
+
+```
+
+Site: Rist
+```{r ristmacroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = rist_adult_df, distributionFamily = poisson())
+
+```
+
+Site: Demi
+```{r demimacroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = demi_adult_df, distributionFamily = poisson())
+
+```
+
+Site: Bowa
+```{r bowamacroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = bowa_adult_df, distributionFamily = poisson())
+
+```
+
+Site: Biva
+```{r bivamacroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = biva_adult_df, distributionFamily = poisson())
+
+```
+
+Site: Baca
+```{r bacamacroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = baca_adult_df, distributionFamily = poisson())
+
+```
+
+Site: Cofr
+```{r cofrmacroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = cofr_adult_df, distributionFamily = poisson())
+
+```
+
+Site: Joma
+```{r jomamacroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMa(site_df = joma_adult_df, distributionFamily = poisson())
+
+```
+
+## Pooled micro-moth checks
+
+### First negative binomial distributions
+
+Site: AUCA
+```{r microNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = auca_adult_df, distributionFamily = negbin(3))
+
+```
+
+Site: PRCR
+```{r prcrmicroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = prcr_adult_df, distributionFamily = negbin(3))
+
+```
+
+Site: Rist
+```{r ristmicroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = rist_adult_df, distributionFamily = negbin(3))
+
+```
+
+Site: Demi
+```{r demimicroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = demi_adult_df, distributionFamily = negbin(3))
+
+```
+
+Site: Bowa
+```{r bowamicroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = bowa_adult_df, distributionFamily = negbin(3))
+
+```
+
+Site: Biva
+```{r bivamicroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = biva_adult_df, distributionFamily = negbin(3))
+
+```
+
+Site: Baca
+```{r bacamicroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = baca_adult_df, distributionFamily = negbin(3))
+
+```
+
+Site: Cofr
+```{r cofrmicroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = cofr_adult_df, distributionFamily = negbin(3))
+
+```
+
+Site: Joma
+```{r jomamicroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = joma_adult_df, distributionFamily = negbin(3))
+
+```
+
+## Now fit using poisson
+
+Site: AUCA
+```{r microPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = auca_adult_df, distributionFamily = poisson())
+
+```
+
+Site: PRCR
+```{r prcrmicroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = prcr_adult_df, distributionFamily = poisson())
+
+```
+
+Site: Rist
+```{r ristmicroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = rist_adult_df, distributionFamily = poisson())
+
+```
+
+Site: Demi
+```{r demimicroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = demi_adult_df, distributionFamily = poisson())
+
+```
+
+Site: Bowa
+```{r bowamicroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = bowa_adult_df, distributionFamily = poisson())
+
+```
+
+Site: Biva
+```{r bivamicroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = biva_adult_df, distributionFamily = poisson())
+
+```
+
+Site: Baca
+```{r bacamicroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = baca_adult_df, distributionFamily = poisson())
+
+```
+
+Site: Cofr
+```{r cofrmicroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = cofr_adult_df, distributionFamily = poisson())
+
+```
+
+Site: Joma
+```{r jomamicroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaMicro(site_df = joma_adult_df, distributionFamily = poisson())
+
+```
