@@ -247,14 +247,15 @@ source('scripts/01_plotStudyArea.R')
 library(ggpubr)
 
 # Arrange together
-p_left <- ggarrange(imperviousSurfacePlot, canopyCoverPlot, ncol = 1, labels = c("A", "B"), label.y = 0.8)
+p_left <- ggarrange(imperviousSurfacePlot, canopyCoverPlot, ncol = 1, labels = c("A", "B"),
+                    label.y = 0.8, font.label = list(size = 18))
 ga1 <- ggpubr::ggarrange(frass_peak1_plotDev, micro_peak1_plotDev, macro_peak_plotPI,
                          frass_peak2_plotDev, micro_peak2_plotDev, ggplot() + theme_void(), 
-                         labels = c("C", "G", "K", "D", "H"))
+                         labels = c("C", "G", "K", "D", "H"), font.label = list(size = 18))
 
 ga2 <- ggpubr::ggarrange(frass_peak1_plotCP, micro_peak1_plotCP, macro_peak_plotCP,
                          frass_peak2_plotCP, micro_peak2_plotCP, ggplot() + theme_void(),
-                         labels = c("E", "I", "L", "F", "J"))
+                         labels = c("E", "I", "L", "F", "J"), font.label = list(size = 18))
 
 p_right <- ggpubr::ggarrange(ga1, ga2, nrow = 2, ncol = 1)
 
