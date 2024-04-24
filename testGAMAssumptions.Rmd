@@ -1,7 +1,5 @@
 ---
 title: "GAM Assumption Checks"
-author: "Michael W Belitz"
-date: "2024-03-16"
 output: pdf_document
 ---
 
@@ -74,13 +72,36 @@ return(resPlot)
   
 }
 
+generateDHARMaFrass <- function(site_df){
+  
+  g <- gam(microMoths ~ s(doy, k = 6, bs = "cr") + s(lunar.phase, k = 3, bs = "cr"),  
+         data = site_df)
+
+res = DHARMa::simulateResiduals(g)
+resPlot <- plot(res)
+
+return(resPlot)
+  
+}
+
 ```
+
+**Journal:** Ecology
+
+**Title:** Temperature niche and body-size conditions phenological responses of moths to urbanization in subtropical environments
+
+**Authors:** Michael W. Belitz, Asia Sawyer, Lillian K. Hendrick, Robert P. Guralnick
+
+In this document, we show DHARMa residual checks of models fit with both negative binomial distributions and Poisson distributions. The negative binomial distribution fit our pooled community data well, while the Poisson distribution performed less well. We also tested examined the residuals of models fit with the negative binomial distribution and the Poisson distribution for our species-specific models. Those results also indicate that the negative binomial distribution fits our data better, although those results are not plotted below. 
 
 ## Pooled Macro-moth checks
 
 ### First negative binomial distributions
 
+We first show the residual checks for models fit using the negative binomial distribution to our pooled macro-moth data. 
+
 Site: AUCA
+
 ```{r macroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = auca_adult_df, distributionFamily = negbin(3))
@@ -88,6 +109,7 @@ generateDHARMa(site_df = auca_adult_df, distributionFamily = negbin(3))
 ```
 
 Site: PRCR
+
 ```{r prcrmacroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = prcr_adult_df, distributionFamily = negbin(3))
@@ -95,6 +117,7 @@ generateDHARMa(site_df = prcr_adult_df, distributionFamily = negbin(3))
 ```
 
 Site: Rist
+
 ```{r ristmacroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = rist_adult_df, distributionFamily = negbin(3))
@@ -102,6 +125,7 @@ generateDHARMa(site_df = rist_adult_df, distributionFamily = negbin(3))
 ```
 
 Site: Demi
+
 ```{r demimacroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = demi_adult_df, distributionFamily = negbin(3))
@@ -109,6 +133,7 @@ generateDHARMa(site_df = demi_adult_df, distributionFamily = negbin(3))
 ```
 
 Site: Bowa
+
 ```{r bowamacroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = bowa_adult_df, distributionFamily = negbin(3))
@@ -116,6 +141,7 @@ generateDHARMa(site_df = bowa_adult_df, distributionFamily = negbin(3))
 ```
 
 Site: Biva
+
 ```{r bivamacroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = biva_adult_df, distributionFamily = negbin(3))
@@ -123,6 +149,7 @@ generateDHARMa(site_df = biva_adult_df, distributionFamily = negbin(3))
 ```
 
 Site: Baca
+
 ```{r bacamacroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = baca_adult_df, distributionFamily = negbin(3))
@@ -130,6 +157,7 @@ generateDHARMa(site_df = baca_adult_df, distributionFamily = negbin(3))
 ```
 
 Site: Cofr
+
 ```{r cofrmacroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = cofr_adult_df, distributionFamily = negbin(3))
@@ -137,15 +165,19 @@ generateDHARMa(site_df = cofr_adult_df, distributionFamily = negbin(3))
 ```
 
 Site: Joma
+
 ```{r jomamacroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = joma_adult_df, distributionFamily = negbin(3))
 
 ```
 
-## Now fit using poisson
+## Poisson distribution
+
+We now show the residual checks for models fit to our pooled macro-moth data using the Poisson distribution. 
 
 Site: AUCA
+
 ```{r macroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = auca_adult_df, distributionFamily = poisson())
@@ -153,6 +185,7 @@ generateDHARMa(site_df = auca_adult_df, distributionFamily = poisson())
 ```
 
 Site: PRCR
+
 ```{r prcrmacroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = prcr_adult_df, distributionFamily = poisson())
@@ -160,6 +193,7 @@ generateDHARMa(site_df = prcr_adult_df, distributionFamily = poisson())
 ```
 
 Site: Rist
+
 ```{r ristmacroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = rist_adult_df, distributionFamily = poisson())
@@ -167,6 +201,7 @@ generateDHARMa(site_df = rist_adult_df, distributionFamily = poisson())
 ```
 
 Site: Demi
+
 ```{r demimacroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = demi_adult_df, distributionFamily = poisson())
@@ -174,6 +209,7 @@ generateDHARMa(site_df = demi_adult_df, distributionFamily = poisson())
 ```
 
 Site: Bowa
+
 ```{r bowamacroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = bowa_adult_df, distributionFamily = poisson())
@@ -181,6 +217,7 @@ generateDHARMa(site_df = bowa_adult_df, distributionFamily = poisson())
 ```
 
 Site: Biva
+
 ```{r bivamacroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = biva_adult_df, distributionFamily = poisson())
@@ -188,6 +225,7 @@ generateDHARMa(site_df = biva_adult_df, distributionFamily = poisson())
 ```
 
 Site: Baca
+
 ```{r bacamacroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = baca_adult_df, distributionFamily = poisson())
@@ -195,6 +233,7 @@ generateDHARMa(site_df = baca_adult_df, distributionFamily = poisson())
 ```
 
 Site: Cofr
+
 ```{r cofrmacroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = cofr_adult_df, distributionFamily = poisson())
@@ -202,6 +241,7 @@ generateDHARMa(site_df = cofr_adult_df, distributionFamily = poisson())
 ```
 
 Site: Joma
+
 ```{r jomamacroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMa(site_df = joma_adult_df, distributionFamily = poisson())
@@ -210,9 +250,12 @@ generateDHARMa(site_df = joma_adult_df, distributionFamily = poisson())
 
 ## Pooled micro-moth checks
 
-### First negative binomial distributions
+### Negative binomial distributions
+
+We now show the residual checks for models fit using the negative binomial distribution to our pooled micro-moth data. 
 
 Site: AUCA
+
 ```{r microNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = auca_adult_df, distributionFamily = negbin(3))
@@ -220,6 +263,7 @@ generateDHARMaMicro(site_df = auca_adult_df, distributionFamily = negbin(3))
 ```
 
 Site: PRCR
+
 ```{r prcrmicroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = prcr_adult_df, distributionFamily = negbin(3))
@@ -227,6 +271,7 @@ generateDHARMaMicro(site_df = prcr_adult_df, distributionFamily = negbin(3))
 ```
 
 Site: Rist
+
 ```{r ristmicroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = rist_adult_df, distributionFamily = negbin(3))
@@ -234,6 +279,7 @@ generateDHARMaMicro(site_df = rist_adult_df, distributionFamily = negbin(3))
 ```
 
 Site: Demi
+
 ```{r demimicroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = demi_adult_df, distributionFamily = negbin(3))
@@ -241,6 +287,7 @@ generateDHARMaMicro(site_df = demi_adult_df, distributionFamily = negbin(3))
 ```
 
 Site: Bowa
+
 ```{r bowamicroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = bowa_adult_df, distributionFamily = negbin(3))
@@ -248,6 +295,7 @@ generateDHARMaMicro(site_df = bowa_adult_df, distributionFamily = negbin(3))
 ```
 
 Site: Biva
+
 ```{r bivamicroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = biva_adult_df, distributionFamily = negbin(3))
@@ -255,6 +303,7 @@ generateDHARMaMicro(site_df = biva_adult_df, distributionFamily = negbin(3))
 ```
 
 Site: Baca
+
 ```{r bacamicroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = baca_adult_df, distributionFamily = negbin(3))
@@ -262,6 +311,7 @@ generateDHARMaMicro(site_df = baca_adult_df, distributionFamily = negbin(3))
 ```
 
 Site: Cofr
+
 ```{r cofrmicroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = cofr_adult_df, distributionFamily = negbin(3))
@@ -269,6 +319,7 @@ generateDHARMaMicro(site_df = cofr_adult_df, distributionFamily = negbin(3))
 ```
 
 Site: Joma
+
 ```{r jomamicroNegBin, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = joma_adult_df, distributionFamily = negbin(3))
@@ -277,7 +328,10 @@ generateDHARMaMicro(site_df = joma_adult_df, distributionFamily = negbin(3))
 
 ## Now fit using poisson
 
+And finally, we show the residual checks for models fit using the Poisson distribution to our pooled micro-moth data. 
+
 Site: AUCA
+
 ```{r microPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = auca_adult_df, distributionFamily = poisson())
@@ -285,6 +339,7 @@ generateDHARMaMicro(site_df = auca_adult_df, distributionFamily = poisson())
 ```
 
 Site: PRCR
+
 ```{r prcrmicroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = prcr_adult_df, distributionFamily = poisson())
@@ -292,6 +347,7 @@ generateDHARMaMicro(site_df = prcr_adult_df, distributionFamily = poisson())
 ```
 
 Site: Rist
+
 ```{r ristmicroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = rist_adult_df, distributionFamily = poisson())
@@ -299,6 +355,7 @@ generateDHARMaMicro(site_df = rist_adult_df, distributionFamily = poisson())
 ```
 
 Site: Demi
+
 ```{r demimicroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = demi_adult_df, distributionFamily = poisson())
@@ -306,6 +363,7 @@ generateDHARMaMicro(site_df = demi_adult_df, distributionFamily = poisson())
 ```
 
 Site: Bowa
+
 ```{r bowamicroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = bowa_adult_df, distributionFamily = poisson())
@@ -313,6 +371,7 @@ generateDHARMaMicro(site_df = bowa_adult_df, distributionFamily = poisson())
 ```
 
 Site: Biva
+
 ```{r bivamicroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = biva_adult_df, distributionFamily = poisson())
@@ -320,6 +379,7 @@ generateDHARMaMicro(site_df = biva_adult_df, distributionFamily = poisson())
 ```
 
 Site: Baca
+
 ```{r bacamicroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = baca_adult_df, distributionFamily = poisson())
@@ -327,6 +387,7 @@ generateDHARMaMicro(site_df = baca_adult_df, distributionFamily = poisson())
 ```
 
 Site: Cofr
+
 ```{r cofrmicroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = cofr_adult_df, distributionFamily = poisson())
@@ -334,8 +395,87 @@ generateDHARMaMicro(site_df = cofr_adult_df, distributionFamily = poisson())
 ```
 
 Site: Joma
+
 ```{r jomamicroPoisson, echo=FALSE, message=FALSE, warning=FALSE}
 
 generateDHARMaMicro(site_df = joma_adult_df, distributionFamily = poisson())
+
+```
+
+## Frass model residual checks
+
+### Fit with gaussian distribution
+
+We end with checks on our models fit to the frass data. 
+
+Site: AUCA
+
+```{r frassA, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaFrass(site_df = auca_adult_df)
+
+```
+
+Site: PRCR
+
+```{r prcrFrass, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaFrass(site_df = prcr_adult_df)
+
+```
+
+Site: Rist
+
+```{r ristFrassPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaFrass(site_df = rist_adult_df)
+
+```
+
+Site: Demi
+
+```{r demiFrassPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaFrass(site_df = demi_adult_df)
+
+```
+
+Site: Bowa
+
+```{r bowaFrassPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaFrass(site_df = bowa_adult_df)
+
+```
+
+Site: Biva
+
+```{r bivaFrassPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaFrass(site_df = biva_adult_df)
+
+```
+
+Site: Baca
+
+```{r bacaFrassPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaFrass(site_df = baca_adult_df)
+
+```
+
+Site: Cofr
+
+```{r cofrFrassPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaFrass(site_df = cofr_adult_df)
+
+```
+
+Site: Joma
+
+```{r jomaFrassPoisson, echo=FALSE, message=FALSE, warning=FALSE}
+
+generateDHARMaFrass(site_df = joma_adult_df)
 
 ```
