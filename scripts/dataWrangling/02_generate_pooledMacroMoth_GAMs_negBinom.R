@@ -16,7 +16,7 @@ adult_gb <- adult_df %>%
   summarise(macroMoths = sum(macroMoths),
             microMoths = sum(microMoths))
 
-ggplot(adult_gb, aes(x = doy2, y = microMoths, color = location)) +
+ggplot(adult_gb, aes(x = doy2, y = macroMoths, color = location)) +
   geom_point() +
   geom_smooth(method = "gam", formula = y ~ s(x, bs = "cr", k = 24))
 
@@ -48,8 +48,8 @@ joma_adult_df <- filter(adult_gb, location == "JOMA")
 # function for gam for each location
 gam_pred <- function(site_df){
   
-  g <- gam(microMoths ~ s(doy, k = 6, bs = "cr") + s(lunar.phase, k = 3, bs = "cr"),  
-           data = site_df, family = poisson)
+  g <- gam(macroMoths ~ s(doy, k = 6, bs = "cr") + s(lunar.phase, k = 3, bs = "cr"),  
+           data = site_df, family = negbin(3))
   
   g_pred <- predict.gam(g, newdata=data.frame(doy=unique(60:424),
                                               lunar.phase = rep(0.5, length(unique(60:424)))), 
@@ -69,11 +69,11 @@ auca_gam_pred <- gam_pred(site_df = auca_adult_df) %>%
   mutate(Site = "AUCA")
 
 auca_plot <- ggplot() +
-  geom_point(data = auca_adult_df, aes(x = doy2, y = microMoths)) +
+  geom_point(data = auca_adult_df, aes(x = doy2, y = macroMoths)) +
   geom_line(data = auca_gam_pred, aes(x = doy2, y = fit)) +
   geom_ribbon(data = auca_gam_pred, aes(x = doy2, ymin = fit - se, ymax = fit + se),
               alpha = 0.2) +
-  labs(x = "DOY", y = "Micro-moths") +
+  labs(x = "DOY", y = "Macro-moths") +
   ggtitle("Rural site: Austin Cary Forest (AUCA)") +
   theme_bw() +
   theme(plot.title = element_text(size = 10, face = "bold"))
@@ -84,11 +84,11 @@ rist_gam_pred <- gam_pred(site_df = rist_adult_df) %>%
   mutate(Site = "RIST")
 
 rist_plot <- ggplot() +
-  geom_point(data = rist_adult_df, aes(x = doy2, y = microMoths)) +
+  geom_point(data = rist_adult_df, aes(x = doy2, y = macroMoths)) +
   geom_line(data = rist_gam_pred, aes(x = doy2, y = fit)) +
   geom_ribbon(data = rist_gam_pred, aes(x = doy2, ymin = fit - se, ymax = fit + se),
               alpha = 0.2) +
-  labs(x = "DOY", y = "Micro-moths") +
+  labs(x = "DOY", y = "Macro-moths") +
   ggtitle("Rural site: Longleaf flatwoods reserve (RIST)") +
   theme_bw() +
   theme(plot.title = element_text(size = 10, face = "bold"))
@@ -99,11 +99,11 @@ prcr_gam_pred <- gam_pred(site_df = prcr_adult_df) %>%
   mutate(Site = "PRCR")
 
 prcr_plot <- ggplot() +
-  geom_point(data = prcr_adult_df, aes(x = doy2, y = microMoths)) +
+  geom_point(data = prcr_adult_df, aes(x = doy2, y = macroMoths)) +
   geom_line(data = prcr_gam_pred, aes(x = doy2, y = fit)) +
   geom_ribbon(data = prcr_gam_pred, aes(x = doy2, ymin = fit - se, ymax = fit + se),
               alpha = 0.2) +
-  labs(x = "DOY", y = "Micro-moths") +
+  labs(x = "DOY", y = "Macro-moths") +
   ggtitle("Rural site: Prairie Creek Preserve (PRCR)") +
   theme_bw() +
   theme(plot.title = element_text(size = 10, face = "bold"))
@@ -114,11 +114,11 @@ bowa_gam_pred <- gam_pred(site_df = bowa_adult_df) %>%
   mutate(Site = "BOWA")
 
 bowa_plot <- ggplot() +
-  geom_point(data = bowa_adult_df, aes(x = doy2, y = microMoths)) +
+  geom_point(data = bowa_adult_df, aes(x = doy2, y = macroMoths)) +
   geom_line(data = bowa_gam_pred, aes(x = doy2, y = fit)) +
   geom_ribbon(data = bowa_gam_pred, aes(x = doy2, ymin = fit - se, ymax = fit + se),
               alpha = 0.2) +
-  labs(x = "DOY", y = "Micro-moths") +
+  labs(x = "DOY", y = "Macro-moths") +
   ggtitle("Suburban site: Boulware springs park (BOWA)") +
   theme_bw() +
   theme(plot.title = element_text(size = 10, face = "bold"))
@@ -129,11 +129,11 @@ biva_gam_pred <- gam_pred(site_df = biva_adult_df) %>%
   mutate(Site = "BIVA")
 
 biva_plot <- ggplot() +
-  geom_point(data = biva_adult_df, aes(x = doy2, y = microMoths)) +
+  geom_point(data = biva_adult_df, aes(x = doy2, y = macroMoths)) +
   geom_line(data = biva_gam_pred, aes(x = doy2, y = fit)) +
   geom_ribbon(data = biva_gam_pred, aes(x = doy2, ymin = fit - se, ymax = fit + se),
               alpha = 0.2) +
-  labs(x = "DOY", y = "Micro-moths") +
+  labs(x = "DOY", y = "Macro-moths") +
   ggtitle("Suburban site: Bivens Arm Nature Park (BIVA)") +
   theme_bw() +
   theme(plot.title = element_text(size = 10, face = "bold"))
@@ -145,15 +145,14 @@ demi_gam_pred <- gam_pred(site_df = demi_adult_df) %>%
   mutate(Site = "DEMI")
 
 demi_plot <- ggplot() +
-  geom_point(data = demi_adult_df, aes(x = doy2, y = microMoths)) +
+  geom_point(data = demi_adult_df, aes(x = doy2, y = macroMoths)) +
   geom_line(data = demi_gam_pred, aes(x = doy2, y = fit)) +
   geom_ribbon(data = demi_gam_pred, aes(x = doy2, ymin = fit - se, ymax = fit + se),
               alpha = 0.2) +
-  labs(x = "DOY", y = "Micro-moths") +
+  labs(x = "DOY", y = "Macro-moths") +
   ggtitle("Suburban site: Devil's Millhopper State Park (DEMI)") +
   theme_bw() +
   theme(plot.title = element_text(size = 10, face = "bold"))
-
 demi_plot
 
 # cofr #
@@ -161,11 +160,11 @@ cofr_gam_pred <- gam_pred(site_df = cofr_adult_df) %>%
   mutate(Site = "COFR")
 
 cofr_plot <- ggplot() +
-  geom_point(data = cofr_adult_df, aes(x = doy2, y = microMoths)) +
+  geom_point(data = cofr_adult_df, aes(x = doy2, y = macroMoths)) +
   geom_line(data = cofr_gam_pred, aes(x = doy2, y = fit)) +
   geom_ribbon(data = cofr_gam_pred, aes(x = doy2, ymin = fit - se, ymax = fit + se),
               alpha = 0.2) +
-  labs(x = "DOY", y = "Micro-moths") +
+  labs(x = "DOY", y = "Macro-moths") +
   ggtitle("Urban site: Cofrin Nature Park (COFR)") +
   theme_bw() +
   theme(plot.title = element_text(size = 10, face = "bold"))
@@ -176,11 +175,11 @@ joma_gam_pred <- gam_pred(site_df = joma_adult_df) %>%
   mutate(Site = "JOMA")
 
 joma_plot <- ggplot() +
-  geom_point(data = joma_adult_df, aes(x = doy2, y = microMoths)) +
+  geom_point(data = joma_adult_df, aes(x = doy2, y = macroMoths)) +
   geom_line(data = joma_gam_pred, aes(x = doy2, y = fit)) +
   geom_ribbon(data = joma_gam_pred, aes(x = doy2, ymin = fit - se, ymax = fit + se),
               alpha = 0.2) +
-  labs(x = "DOY", y = "Micro-moths") +
+  labs(x = "DOY", y = "Macro-moths") +
   ggtitle("Urban site: John Mahon Nature Park (JOMA)") +
   theme_bw() +
   theme(plot.title = element_text(size = 10, face = "bold"))
@@ -191,14 +190,15 @@ baca_gam_pred <- gam_pred(site_df = baca_adult_df) %>%
   mutate(Site = "BACA")
 
 baca_plot <- ggplot() +
-  geom_point(data = baca_adult_df, aes(x = doy2, y = microMoths)) +
+  geom_point(data = baca_adult_df, aes(x = doy2, y = macroMoths)) +
   geom_line(data = baca_gam_pred, aes(x = doy2, y = fit)) +
   geom_ribbon(data = baca_gam_pred, aes(x = doy2, ymin = fit - se, ymax = fit + se),
               alpha = 0.2) +
-  labs(x = "DOY", y = "Micro-moths") +
+  labs(x = "DOY", y = "Macro-moths") +
   ggtitle("Urban site: Bartram/Carr Woods (BACA)") +
   theme_bw() +
   theme(plot.title = element_text(size = 10, face = "bold"))
+
 baca_plot
 
 
@@ -209,7 +209,7 @@ cp <- cowplot::plot_grid(baca_plot, cofr_plot, joma_plot,
                          nrow = 3, ncol = 3)
 cp
 
-ggsave(plot = cp, filename = "figOutputs/microMothGams.png", dpi = 450,
+ggsave(plot = cp, filename = "figOutputs/macroMothGams_negBinomial.png", dpi = 450,
        width = 12, height = 8)
 
 
@@ -220,4 +220,4 @@ tdf <- rbind(auca_gam_pred, prcr_gam_pred, rist_gam_pred,
              baca_gam_pred, cofr_gam_pred, joma_gam_pred)
 
 
-write.csv(tdf, file = "data/gamOutputs/microMothGams.csv", row.names = F)
+write.csv(tdf, file = "data/gamOutputs/macroMothGams_negBinomial.csv", row.names = F)

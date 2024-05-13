@@ -5,10 +5,10 @@ library(ggplot2)
 frass_gams <- read.csv("data/gamOutputs/frassGams_perDay_randomEffect.csv") %>% 
   mutate(unit = "Frass") %>% 
   mutate(rel_abundance = (fit * -1) / (max(fit) * -1))
-macro_gams <- read.csv("data/gamOutputs/macroMothGams.csv") %>% 
+macro_gams <- read.csv("data/gamOutputs/macroMothGams_negBinomial.csv") %>% 
   mutate(unit = "Macro-moths") %>% 
   mutate(rel_abundance = fit / max(fit))
-micro_gams <- read.csv('data/gamOutputs/microMothGams.csv') %>% 
+micro_gams <- read.csv('data/gamOutputs/microMothGams_negBinom.csv') %>% 
   mutate(unit = "Micro-moths") %>% 
   mutate(rel_abundance = fit / max(fit))
 
@@ -60,8 +60,8 @@ frassPhenoMet <- left_join(frassPhenoMet2, frassPhenoMet1)
 
 # write df of phenometrics
 write.csv(x = microPhenoMet,
-          file = "data/phenoData/microMothsPhenoMetrics.csv", row.names = F)
+          file = "data/phenoData/microMothsPhenoMetrics_negBinom.csv", row.names = F)
 write.csv(x = macroPhenoMet,
-          file = "data/phenoData/macroMothsPhenoMetrics.csv", row.names = F)
+          file = "data/phenoData/macroMothsPhenoMetrics_negBinom.csv", row.names = F)
 write.csv(x = frassPhenoMet,
           file = "data/phenoData/frassPhenoMetrics_perDay_trapRE.csv", row.names = F)
