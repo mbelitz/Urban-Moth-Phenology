@@ -16,3 +16,5 @@ plot(impervious_crop)
 impervious_alachua <- mask(impervious_crop, fl)
 
 impervious_focal <- focal(impervious_alachua, w = 29, fun = "mean")
+
+# this script was repeated for canopy cover surface
