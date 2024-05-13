@@ -25,7 +25,7 @@ macro <- macro %>%
   left_join(urb) %>% 
   left_join(canopy)
 
-# make model for frass, 4 predictors are propImpervious 300m,  propCanopyCover30m
+# make model for frass, 2 predictors are propImpervious 300m,  propCanopyCover30m
 frassPeak1_PI300m <- lm(formula = peak1 ~ propImpervious300m,
                       data = frass)
 frassPeak1_CP300m <- lm(formula = peak1 ~ propCanopy300m,
