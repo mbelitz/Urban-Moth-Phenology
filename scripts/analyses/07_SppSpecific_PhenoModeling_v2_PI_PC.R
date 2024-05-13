@@ -6,15 +6,8 @@ library(data.table)
 library(MuMIn)
 library(car)
 
-# read in gams
-l <- list.files("data/sppSpecific_gamOutputsCSVs/", full.names = T)
-
-gam_df <- l %>% 
-  map_df(~fread(.))
-
-gam_df <- gam_df %>% 
-  filter(!is.na(fit)) %>% 
-  mutate(SiteSpp = paste(Site, validName, sep = "_"))
+# read csv with site by species combinations with GAMs with properly fit GAMs that have clear peaks
+usableSppSites <- read.csv("data/phenoData/usableSppBySites.csv")
 
 # read in gams
 l_nb <- list.files("data/sppSpecific_gamOutputsCSVs_negBinom/", full.names = T)
@@ -28,7 +21,7 @@ gam_df_nb <- gam_df_nb %>%
 
 ## filter to SiteSpp 
 gam_df_nb <- gam_df_nb %>% 
-  filter(SiteSpp %in% gam_df$SiteSpp)
+  filter(SiteSpp %in% usableSppSites$SiteSpp)
 
 # re-assign gam_df_nb as gam_df
 gam_df <- gam_df_nb
@@ -89,10 +82,6 @@ mdf <- mdf %>%
 
 mdf <- na.omit(mdf)
 
-# predictors = 
-# 1)hostPlantSpecialization, 2)max_lat, 3) LST_Night/Dev1/Dev10, 4)voltinism,
-# 5) maxWingspan
-
 # species must be found at at least 2 sites
 # sites must have at least 2 species
 sites <- mdf %>% 
@@ -130,7 +119,7 @@ performance::check_collinearity(m)
 summary(m)
 confint(m)
 
-#rel temp modeling
+#canopy cover
 m3_col <- lmer(formula = peak ~ propCanopy300m  + maxWingspan + bio1_mean + 
                  (1|validName),
                data = mdf, REML = F)
