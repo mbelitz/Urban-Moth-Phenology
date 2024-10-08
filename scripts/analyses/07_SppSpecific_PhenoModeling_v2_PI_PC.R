@@ -178,6 +178,10 @@ sd_propCanopy <- sd(mdf_raw$propCanopy300m)
 mean(mdf_raw$maxWingspan)
 sd(mdf_raw$maxWingspan)
 
+# random effect only model
+re_only <- lmer(formula = peak ~ 
+             (1|validName),
+           data = mdf, REML = F)
 
 anova(re_only, m)
 anova(re_only, m3)
@@ -203,8 +207,8 @@ a <- ggplot(PI_TN_plot_df) +
                                  paste0("16.8", "\u00B0", "C", "\n", "(Warm-Adapted)")))  +
   theme_classic() +
   theme(legend.position = "none",
-        axis.text=element_text(size=14),
-        axis.title=element_text(size=16))
+        axis.text=element_text(size=10),
+        axis.title=element_text(size=12))
 a
 
 b <- ggplot(PI_BS_plot_df) +
@@ -222,8 +226,8 @@ b <- ggplot(PI_BS_plot_df) +
                      labels = c("14.7mm (Small)", "22.6mm\n(Average)", "30.6mm\n(Large)")) +
   theme_classic() +
   theme(legend.position = "none",
-        axis.text=element_text(size=14),
-        axis.title=element_text(size=16))
+        axis.text=element_text(size=10),
+        axis.title=element_text(size=12))
 b
 
 # Canopy cover
@@ -246,10 +250,10 @@ c <- ggplot(CP_TN_plot_df) +
                                  paste0("16.8", "\u00B0", "C", "\n", "(Warm\nAdapted)")))  +
   theme_classic() +
   theme(legend.position = "bottom",
-        axis.text=element_text(size=14),
-        axis.title=element_text(size=16),
-        legend.text = element_text(size = 10),
-        legend.title = element_text(size = 11,
+        axis.text=element_text(size=10),
+        axis.title=element_text(size=12),
+        legend.text = element_text(size = 7),
+        legend.title = element_text(size = 9,
                                     face = "bold"))
 
 c
@@ -269,18 +273,19 @@ d <- ggplot(CP_BS_plot_df) +
                      labels = c("14.7mm\n(Small)", "22.6mm\n(Average)", "30.6mm\n(Large)")) +
   theme_classic() +
   theme(legend.position = "bottom",
-        axis.text=element_text(size=14),
-        axis.title=element_text(size=16),
-        legend.text = element_text(size = 10),
-        legend.title = element_text(size = 11, 
+        axis.text=element_text(size=10),
+        axis.title=element_text(size=12),
+        legend.text = element_text(size = 7),
+        legend.title = element_text(size = 9,
                                     face = "bold"))
+
 d
 
 cp2 <- cowplot::plot_grid(a,b,c,d, labels = c("A", "B", "C", "D"), 
                           nrow = 2, ncol = 2)
-ggsave(plot = cp2, filename = "figOutputs/resubmission/resubmissionSept/Fig2_sppSpecificIntercations_v2_negBinom.png", 
-       dpi = 450,
-       width = 8.3, height = 8.3)
+ggsave(plot = cp2, filename = "figOutputs/resubmission/resubmissionSept/Fig2.pdf", 
+       dpi = 600,
+       width = 18, height = 18, units = "cm")
 
 
 ## write tables for three competing models
