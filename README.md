@@ -1,5 +1,5 @@
 # Urban-Moth-Phenology
-Repository for code and data to reproduce analyses associated with Belitz et al. manuscript currently in Review.
+Repository for code and data to reproduce analyses associated with Belitz et al. paper published in Ecology.
 
 ## data
 Sub-directories holding the necessary data to reproduce results of manuscript. Also has the raw data of the light trap and frass sampling.
